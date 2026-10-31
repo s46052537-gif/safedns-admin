@@ -153,13 +153,14 @@ function start() {
       { id: "y1", name: "سنة", days: 365, price: 90 }
     ], null, 2);
     renderPending();
-  }));
+  }, err => { $("tab-settings").insertAdjacentHTML("afterbegin", '<p class="warn">تعذّر تحميل الإعدادات: ' + esc(err.code + ": " + err.message) + '</p>'); }));
 
   unsubs.push(onSnapshot(query(collection(db, "requests"), where("status", "==", "pending")), s => {
+    pendErr = "";
     pending = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.createdAt?.toMillis?.() ?? 0) - (b.createdAt?.toMillis?.() ?? 0));
     $("pcount").textContent = pending.length ? "(" + pending.length + ")" : "";
     renderPending();
-  }));
+  }, err => { pendErr = err.code + ": " + err.message; renderPending(); }));
 
   unsubs.push(onSnapshot(query(collection(db, "requests"), orderBy("createdAt", "desc"), limit(50)), s => {
     const rows = s.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -174,11 +175,13 @@ function start() {
 
 const statusAr = (s) => ({ pending: "قيد المراجعة", approved: "تم التفعيل", rejected: "مرفوض" }[s] || s);
 let pending = [];
+let pendErr = "";
 
 function planOf(r) { return (config.plans || []).find(p => p.id === r.planId); }
 
 function renderPending() {
   const box = $("tab-pending");
+  if (pendErr) { box.innerHTML = '<p class="warn">تعذّر تحميل الطلبات: ' + esc(pendErr) + '</p>'; return; }
   if (!pending.length) { box.innerHTML = '<p class="muted">لا توجد طلبات قيد المراجعة 🎉</p>'; return; }
   box.innerHTML = pending.map(r => {
     const p = planOf(r);
