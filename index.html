@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة مراجعة الشحن</title>
+<style>
+  :root { --bg:#f4f6fb; --card:#fff; --ink:#1b2033; --muted:#6b7390; --brand:#1f5fd8; --ok:#2e7d32; --bad:#c62828; --warn:#ef6c00; --line:#e3e7f2; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f1220; --card:#181c2e; --ink:#eef0fa; --muted:#9aa3c4; --line:#2a2f4a; } }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; background:var(--card); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  h1 { font-size:18px; margin:0; }
+  main { max-width:900px; margin:0 auto; padding:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:12px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .grow { flex:1; }
+  .muted { color:var(--muted); font-size:13px; }
+  .tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .tab { padding:8px 14px; border-radius:999px; border:1px solid var(--line); background:var(--card); cursor:pointer; color:var(--ink); font:inherit; }
+  .tab.on { background:var(--brand); color:#fff; border-color:var(--brand); }
+  button.btn { padding:9px 16px; border-radius:10px; border:0; cursor:pointer; font:inherit; color:#fff; background:var(--brand); }
+  button.btn.ok { background:var(--ok); } button.btn.bad { background:var(--bad); } button.btn.ghost { background:transparent; color:var(--brand); border:1px solid var(--line); }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  input, textarea, select { width:100%; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font:inherit; }
+  label { display:block; margin:10px 0 4px; font-size:13px; color:var(--muted); }
+  .badge { padding:2px 10px; border-radius:999px; font-size:12px; color:#fff; }
+  .pending { background:var(--warn); } .approved { background:var(--ok); } .rejected { background:var(--bad); }
+  img.receipt { max-width:100%; max-height:520px; border-radius:10px; border:1px solid var(--line); margin-top:10px; }
+  .warn { color:var(--warn); font-weight:bold; }
+  code { background:var(--bg); padding:2px 6px; border-radius:6px; direction:ltr; unicode-bidi:embed; }
+  #login { max-width:380px; margin:60px auto; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>لوحة مراجعة الشحن</h1>
+  <div class="row"><span id="who" class="muted"></span><button id="logout" class="btn ghost hidden">خروج</button></div>
+</header>
+
+<main>
+  <!-- تسجيل الدخول -->
+  <section id="login" class="card">
+    <h2 style="margin-top:0">تسجيل دخول المشرف</h2>
+    <label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username">
+    <label>كلمة المرور</label><input id="pass" type="password" autocomplete="current-password">
+    <p id="loginErr" class="warn"></p>
+    <button id="loginBtn" class="btn" style="width:100%">دخول</button>
+  </section>
+
+  <!-- اللوحة -->
+  <section id="app" class="hidden">
+    <div class="tabs">
+      <button class="tab on" data-tab="pending">قيد المراجعة <span id="pcount"></span></button>
+      <button class="tab" data-tab="history">السجل</button>
+      <button class="tab" data-tab="grant">منح أيام يدويًا</button>
+      <button class="tab" data-tab="settings">الإعدادات</button>
+    </div>
+
+    <div id="tab-pending"></div>
+    <div id="tab-history" class="hidden"></div>
+
+    <div id="tab-grant" class="hidden card">
+      <p class="muted">لتعويض مستخدم أو منحه هدية. انسخ المعرّف (UID) من بطاقة أي طلب له.</p>
+      <label>UID المستخدم</label><input id="gUid" dir="ltr">
+      <label>عدد الأيام</label><input id="gDays" type="number" min="1" value="30">
+      <p></p><button id="gBtn" class="btn">منح</button>
+      <p id="gMsg" class="muted"></p>
+    </div>
+
+    <div id="tab-settings" class="hidden card">
+      <p class="muted">هذه البيانات تظهر للمستخدمين في التطبيق ولا تحتاج تحديث التطبيق عند تغييرها.</p>
+      <label>اسم المصرف</label><input id="sBank">
+      <label>اسم المستفيد</label><input id="sHolder">
+      <label>رقم الحساب</label><input id="sAccount" dir="ltr">
+      <label>نطاق خدمة DNS الخاص (نفس DOMAIN في ملف .env بالخادم، مثل dns.mydomain.com)</label><input id="sDnsDomain" dir="ltr">
+      <label>رقم واتساب للدعم (بصيغة دولية بدون +، مثل 218912345678)</label><input id="sWa" dir="ltr">
+      <label>ملاحظة تظهر للمستخدم (اختياري)</label><textarea id="sNote" rows="2"></textarea>
+      <label>الباقات (JSON): المعرّف id، الاسم name، الأيام days، السعر بالدينار price</label>
+      <textarea id="sPlans" rows="9" dir="ltr" style="font-family:monospace"></textarea>
+      <p></p><button id="sBtn" class="btn">حفظ</button> <span id="sMsg" class="muted"></span>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+// ============ ضع إعدادات مشروعك هنا (Firebase Console ← Project settings ← Your apps ← Web app) ============
+const firebaseConfig = {
+  apiKey: "AIzaSyBdi5Ar0Rrq0Zz4vaIuNvd_eC-5PunQS1E",
+  authDomain: "safedns-16570.firebaseapp.com",
+  projectId: "safedns-16570",
+  storageBucket: "safedns-16570.firebasestorage.app",
+  messagingSenderId: "655960104060",
+  appId: "1:655960104060:web:2eba2ec4e59cd5e94b7df9"
+};
+// =================================================================================================
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, setDoc, onSnapshot, query, where, orderBy, limit,
+         runTransaction, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fmtDate = (ts) => ts?.toDate ? ts.toDate().toLocaleString("ar-LY") : "";
+let config = { plans: [] };
+let unsubs = [];
+
+// ---------- الدخول ----------
+$("loginBtn").onclick = async () => {
+  $("loginErr").textContent = "";
+  try { await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value); }
+  catch (e) { $("loginErr").textContent = "تعذّر الدخول: تأكد من البريد وكلمة المرور"; }
+};
+$("pass").addEventListener("keydown", e => { if (e.key === "Enter") $("loginBtn").click(); });
+$("logout").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, async (user) => {
+  unsubs.forEach(u => u()); unsubs = [];
+  if (!user) { $("login").classList.remove("hidden"); $("app").classList.add("hidden"); $("logout").classList.add("hidden"); $("who").textContent = ""; return; }
+  const adm = await getDoc(doc(db, "admins", user.uid));
+  if (!adm.exists()) {
+    $("loginErr").textContent = "هذا الحساب ليس مشرفًا. أضف مستند admins/" + user.uid + " من لوحة Firebase.";
+    await signOut(auth); return;
+  }
+  $("login").classList.add("hidden"); $("app").classList.remove("hidden"); $("logout").classList.remove("hidden");
+  $("who").textContent = user.email;
+  start();
+});
+
+// ---------- التبويبات ----------
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === b));
+  for (const t of ["pending","history","grant","settings"]) $("tab-" + t).classList.toggle("hidden", t !== b.dataset.tab);
+});
+
+function start() {
+  // الإعدادات (الباقات تُستخدم للتحقق من المبلغ وعدد الأيام الحقيقي، لا قيم الطلب)
+  unsubs.push(onSnapshot(doc(db, "config", "app"), s => {
+    config = s.exists() ? s.data() : { plans: [] };
+    config.plans = config.plans || [];
+    $("sBank").value = config.bankName || ""; $("sHolder").value = config.accountHolder || "";
+    $("sAccount").value = config.accountNumber || ""; $("sWa").value = config.whatsapp || "";
+    $("sNote").value = config.note || ""; $("sDnsDomain").value = config.dnsDomain || "";
+    $("sPlans").value = JSON.stringify(config.plans.length ? config.plans : [
+      { id: "m1", name: "شهر", days: 30, price: 10 },
+      { id: "m3", name: "3 أشهر", days: 90, price: 27 },
+      { id: "y1", name: "سنة", days: 365, price: 90 }
+    ], null, 2);
+    renderPending();
+  }));
+
+  unsubs.push(onSnapshot(query(collection(db, "requests"), where("status", "==", "pending")), s => {
+    pending = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.createdAt?.toMillis?.() ?? 0) - (b.createdAt?.toMillis?.() ?? 0));
+    $("pcount").textContent = pending.length ? "(" + pending.length + ")" : "";
+    renderPending();
+  }));
+
+  unsubs.push(onSnapshot(query(collection(db, "requests"), orderBy("createdAt", "desc"), limit(50)), s => {
+    const rows = s.docs.map(d => ({ id: d.id, ...d.data() }));
+    $("tab-history").innerHTML = rows.map(r => `
+      <div class="card">
+        <div class="row"><b class="grow">${esc(r.email)}</b><span class="badge ${esc(r.status)}">${statusAr(r.status)}</span></div>
+        <div class="muted">${esc(r.planName)} • <code>${esc(r.ref)}</code> • ${fmtDate(r.createdAt)}</div>
+        ${r.adminNote ? `<div class="muted">ملاحظة: ${esc(r.adminNote)}</div>` : ""}
+      </div>`).join("") || '<p class="muted">لا يوجد سجل بعد.</p>';
+  }, err => { $("tab-history").innerHTML = '<p class="warn">' + esc(err.message) + '</p>'; }));
+}
+
+const statusAr = (s) => ({ pending: "قيد المراجعة", approved: "تم التفعيل", rejected: "مرفوض" }[s] || s);
+let pending = [];
+
+function planOf(r) { return (config.plans || []).find(p => p.id === r.planId); }
+
+function renderPending() {
+  const box = $("tab-pending");
+  if (!pending.length) { box.innerHTML = '<p class="muted">لا توجد طلبات قيد المراجعة 🎉</p>'; return; }
+  box.innerHTML = pending.map(r => {
+    const p = planOf(r);
+    const mismatch = !p ? "الباقة غير موجودة في الإعدادات!" : (Number(r.price) !== Number(p.price) || Number(r.days) !== Number(p.days) ? "تنبيه: السعر/المدة في الطلب تختلف عن الإعدادات. سيُستخدم ما في الإعدادات." : "");
+    return `
+    <div class="card" data-id="${esc(r.id)}">
+      <div class="row"><b class="grow">${esc(r.email)}</b><span class="badge pending">قيد المراجعة</span></div>
+      <div>الباقة: <b>${esc(p ? p.name : r.planName)}</b> — ${p ? p.days : "?"} يوم — المبلغ المطلوب: <b>${p ? p.price : "?"} د.ل</b></div>
+      <div class="muted">الرمز المرجعي: <code>${esc(r.ref)}</code> • ${fmtDate(r.createdAt)}</div>
+      <div class="muted">UID: <code>${esc(r.uid)}</code></div>
+      ${mismatch ? `<div class="warn">${mismatch}</div>` : ""}
+      <div class="row" style="margin-top:10px">
+        <button class="btn ghost" data-act="view">عرض الإيصال</button>
+        <button class="btn ok" data-act="approve" ${p ? "" : "disabled"}>تفعيل الاشتراك</button>
+        <button class="btn bad" data-act="reject">رفض</button>
+      </div>
+      <div class="receipt-box"></div>
+    </div>`;
+  }).join("");
+}
+
+// ---------- أزرار الطلبات ----------
+$("tab-pending").addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-act]"); if (!btn) return;
+  const card = btn.closest(".card"); const id = card.dataset.id; const r = pending.find(x => x.id === id); if (!r) return;
+  btn.disabled = true;
+  try {
+    if (btn.dataset.act === "view") {
+      const s = await getDoc(doc(db, "receipts", id));
+      card.querySelector(".receipt-box").innerHTML = s.exists()
+        ? `<img class="receipt" alt="receipt" src="data:image/jpeg;base64,${s.data().data.toBase64()}">`
+        : '<p class="warn">الإيصال غير موجود.</p>';
+    } else if (btn.dataset.act === "approve") {
+      const p = planOf(r);
+      if (!confirm(`هل وصل مبلغ ${p.price} د.ل إلى حسابك بالرمز ${r.ref}؟\nسيُفعَّل ${p.days} يوم لـ ${r.email}.`)) return;
+      await approve(r, p);
+    } else if (btn.dataset.act === "reject") {
+      const why = prompt("سبب الرفض (يظهر للمستخدم):", "لم يصل المبلغ / الإيصال غير واضح");
+      if (why === null) return;
+      await reject(r, why);
+    }
+  } catch (err) { alert("حدث خطأ: " + err.message); }
+  finally { btn.disabled = false; }
+});
+
+// تفعيل داخل معاملة (transaction): لا يمكن تفعيل الطلب مرتين حتى لو ضُغط الزر مرتين
+async function approve(r, plan) {
+  await runTransaction(db, async (tx) => {
+    const reqRef = doc(db, "requests", r.id);
+    const entRef = doc(db, "entitlements", r.uid);
+    const reqSnap = await tx.get(reqRef);
+    if (!reqSnap.exists() || reqSnap.data().status !== "pending") throw new Error("تمت معالجة هذا الطلب سابقًا");
+    const entSnap = await tx.get(entRef);
+    const cur = entSnap.exists() && entSnap.data().premiumUntil ? entSnap.data().premiumUntil.toMillis() : 0;
+    const until = new Date(Math.max(Date.now(), cur) + plan.days * 86400000);   // يُضاف إلى المتبقي إن وُجد
+    tx.set(entRef, { premiumUntil: Timestamp.fromDate(until), planId: plan.id, updatedAt: serverTimestamp() }, { merge: true });
+    tx.update(reqRef, { status: "approved", reviewedAt: serverTimestamp(), adminNote: "", premiumUntil: Timestamp.fromDate(until) });
+    tx.delete(doc(db, "receipts", r.id));            // حذف صورة الإيصال بعد التفعيل (خصوصية)
+  });
+}
+
+async function reject(r, note) {
+  await runTransaction(db, async (tx) => {
+    const reqRef = doc(db, "requests", r.id);
+    const s = await tx.get(reqRef);
+    if (!s.exists() || s.data().status !== "pending") throw new Error("تمت معالجة هذا الطلب سابقًا");
+    tx.update(reqRef, { status: "rejected", reviewedAt: serverTimestamp(), adminNote: note });
+    tx.delete(doc(db, "receipts", r.id));
+  });
+}
+
+// ---------- منح يدوي ----------
+$("gBtn").onclick = async () => {
+  const uid = $("gUid").value.trim(); const days = parseInt($("gDays").value, 10);
+  if (!uid || !(days > 0)) { $("gMsg").textContent = "أدخل UID وعدد أيام صحيحًا"; return; }
+  if (!confirm(`منح ${days} يوم للمستخدم ${uid}؟`)) return;
+  try {
+    await runTransaction(db, async (tx) => {
+      const entRef = doc(db, "entitlements", uid);
+      const s = await tx.get(entRef);
+      const cur = s.exists() && s.data().premiumUntil ? s.data().premiumUntil.toMillis() : 0;
+      const until = new Date(Math.max(Date.now(), cur) + days * 86400000);
+      tx.set(entRef, { premiumUntil: Timestamp.fromDate(until), planId: "manual", updatedAt: serverTimestamp() }, { merge: true });
+    });
+    $("gMsg").textContent = "تم المنح ✔";
+  } catch (e) { $("gMsg").textContent = "خطأ: " + e.message; }
+};
+
+// ---------- حفظ الإعدادات ----------
+$("sBtn").onclick = async () => {
+  let plans;
+  try { plans = JSON.parse($("sPlans").value); if (!Array.isArray(plans)) throw 0; } catch { $("sMsg").textContent = "صيغة الباقات (JSON) غير صحيحة"; return; }
+  for (const p of plans) if (!p.id || !(p.days > 0) || !(p.price > 0)) { $("sMsg").textContent = "كل باقة تحتاج id وdays وprice صحيحة"; return; }
+  try {
+    await setDoc(doc(db, "config", "app"), {
+      bankName: $("sBank").value.trim(), accountHolder: $("sHolder").value.trim(),
+      accountNumber: $("sAccount").value.trim(), whatsapp: $("sWa").value.trim(),
+      note: $("sNote").value.trim(), dnsDomain: $("sDnsDomain").value.trim().toLowerCase(), plans
+    });
+    $("sMsg").textContent = "تم الحفظ ✔";
+  } catch (e) { $("sMsg").textContent = "خطأ: " + e.message; }
+};
+</script>
+</body>
+</html>

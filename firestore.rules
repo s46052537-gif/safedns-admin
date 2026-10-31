@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    // المشرف = مستخدم له مستند في admins/{uid} (يُنشأ يدويًا من لوحة Firebase فقط)
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // إعدادات التطبيق (حساب المصرف والباقات): قراءة للجميع، كتابة للمشرف
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // الاشتراك: المستخدم يقرأ اشتراكه فقط، ولا أحد يكتبه إلا المشرف
+    match /entitlements/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // طلبات الشحن
+    match /requests/{ref} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.ref == ref
+        && ref.matches('LD-[A-Z0-9]{6}')
+        && request.resource.data.keys().hasOnly(
+             ['uid','email','planId','planName','days','price','ref','status','receiptHash','createdAt'])
+        // الإيصال والبصمة يُرسلان في نفس العملية
+        && existsAfter(/databases/$(database)/documents/receipts/$(ref))
+        && existsAfter(/databases/$(database)/documents/receiptHashes/$(request.resource.data.receiptHash));
+      allow update, delete: if isAdmin();
+    }
+
+    // صور الإيصالات (يقرؤها المشرف فقط)
+    match /receipts/{ref} {
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid','data','createdAt'])
+        && request.resource.data.data.size() < 600000
+        && getAfter(/databases/$(database)/documents/requests/$(ref)).data.uid == request.auth.uid;
+      allow read, delete: if isAdmin();
+    }
+
+    // بصمات الإيصالات: إنشاء فقط. إن كان المستند موجودًا يصبح الإنشاء "تحديثًا" فيُرفض
+    // ويفشل الطلب كله، وهذا يمنع استخدام نفس صورة الإيصال مرتين.
+    match /receiptHashes/{h} {
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && h.matches('[a-f0-9]{64}');
+      allow read, delete: if isAdmin();
+    }
+  }
+}
