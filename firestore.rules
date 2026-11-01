@@ -61,5 +61,34 @@ service cloud.firestore {
         && h.matches('[a-f0-9]{64}');
       allow read, delete: if isAdmin();
     }
+    // ملف المستخدم: يُنشأ مرة واحدة عند أول دخول. trial=true (تجربة 7 أيام) لا يُقبل إلا
+    // مع ربط الهاتف devices/{hash} في نفس العملية، فلا يحصل هاتف على تجربة ثانية.
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['createdAt','deviceHash','trial'])
+        && request.resource.data.createdAt == request.time
+        && (
+          request.resource.data.trial == false
+          || (
+            request.resource.data.trial == true
+            && request.resource.data.deviceHash.matches('[a-f0-9]{64}')
+            && existsAfter(/databases/$(database)/documents/devices/$(request.resource.data.deviceHash))
+            && getAfter(/databases/$(database)/documents/devices/$(request.resource.data.deviceHash)).data.uid == uid
+          )
+        );
+      allow update, delete: if isAdmin();
+    }
+
+    // بصمة الهاتف (SHA-256، لا يخرج المعرّف الأصلي): إنشاء فقط، فإن وُجد المستند يُرفض الإنشاء الثاني.
+    match /devices/{h} {
+      allow read: if signedIn();
+      allow create: if signedIn() && h.matches('[a-f0-9]{64}')
+        && request.resource.data.keys().hasOnly(['uid','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && existsAfter(/databases/$(database)/documents/users/$(request.auth.uid));
+      allow update, delete: if isAdmin();
+    }
   }
 }
