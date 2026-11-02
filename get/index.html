@@ -38,7 +38,7 @@ a{color:var(--gold)}
 <div class="logo">🛡️</div>
 <h1>تصفّح <b>أهدأ</b> وأسرع وأكثر أمانًا</h1>
 <p class="lead">صافي يحجب الإعلانات المزعجة وأدوات التتبع والمواقع الضارة على هاتفك الأندرويد.</p>
-<a class="btn" href="SafeDNS.apk" download>تنزيل التطبيق (5.5 ميغابايت)</a>
+<a class="btn" href="https://github.com/s46052537-gif/safedns-releases/releases/download/latest/SafeDNS.apk">تنزيل التطبيق (5.5 ميغابايت)</a>
 <div class="small">جرّبه 7 أيام مجانًا • أندرويد 8 فأحدث</div>
 </header>
 
@@ -69,6 +69,7 @@ a{color:var(--gold)}
 <details><summary>هل هو آمن؟</summary><p>التطبيق موقّع رقميًا، ولا يجمع سجل تصفحك. الاتصال الذي يفتحه (VPN) محلي على هاتفك لفحص أسماء المواقع فقط. اقرأ <a href="../privacy.html">سياسة الخصوصية</a>.</p></details>
 <details><summary>لماذا ليس في Google Play؟</summary><p>سياسات المتجر لا تسمح بتطبيقات حجب الإعلانات، لذلك نوزّعه مباشرة من هنا. (نعمل أيضًا على نسخة عائلية للمتجر تحمي الأطفال).</p></details>
 <details><summary>كم السعر؟</summary><p>أول 7 أيام مجانية، ثم باقات شهرية وسنوية تظهر أسعارها داخل التطبيق.</p></details>
+<details><summary>كيف أتحقق أن الملف سليم؟</summary><p>بصمة الملف الحالي (SHA-256): <code id="sha" style="word-break:break-all;direction:ltr;display:block;color:var(--gold)">جارٍ التحميل…</code> يمكنك مقارنتها ببصمة ما نزّلته باستخدام أي تطبيق لفحص الملفات.</p></details>
 <details><summary>كيف أدفع؟</summary><p>من داخل التطبيق بالتحويل المصرفي وإرسال صورة الإيصال، ويُفعَّل اشتراكك بعد المراجعة. ستُضاف طرق دفع أخرى قريبًا.</p></details>
 <details><summary>هل يبطّئ الإنترنت أو يستهلك البطارية؟</summary><p>لا يمرّ عبره سوى طلبات أسماء المواقع، فلا يبطّئ التصفح ويستهلك القليل من البطارية.</p></details>
 <details><summary>كيف أتواصل مع الدعم؟</summary><p>من زر «تواصل معنا» العائم داخل التطبيق.</p></details>
@@ -76,10 +77,15 @@ a{color:var(--gold)}
 
 <section style="text-align:center">
 <h2>جاهز؟</h2>
-<a class="btn" href="SafeDNS.apk" download>تنزيل صافي</a>
+<a class="btn" href="https://github.com/s46052537-gif/safedns-releases/releases/download/latest/SafeDNS.apk">تنزيل صافي</a>
 </section>
 
 <footer>© صافي • <a href="../privacy.html">سياسة الخصوصية</a></footer>
 </div>
+<script>
+fetch("https://api.github.com/repos/s46052537-gif/safedns-releases/releases/tags/latest")
+ .then(r=>r.json()).then(j=>{var m=/SHA-256:\s*([0-9a-f]{64})/i.exec(j.body||"");document.getElementById("sha").textContent=m?m[1]:"غير متاحة الآن"})
+ .catch(function(){document.getElementById("sha").textContent="غير متاحة الآن"});
+</script>
 </body>
 </html>
