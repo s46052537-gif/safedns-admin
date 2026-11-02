@@ -20,6 +20,7 @@ h1,h2{color:#0b7a5d}section{background:#fff;border-radius:14px;padding:8px 20px;
 <ul>
 <li><b>الحساب:</b> البريد الإلكتروني (ومعرّف الحساب) عند تسجيل الدخول بالبريد أو Google. لا نصل إلى منشوراتك ولا أصدقائك.</li>
 <li><b>بصمة الهاتف:</b> قيمة مجزّأة (SHA-256) من معرّف الجهاز، لمنع تكرار التجربة المجانية على الهاتف نفسه. لا نخزّن المعرّف الأصلي.</li>
+<li><b>تقارير الأعطال:</b> عند تعطّل التطبيق يُرسل تقرير تقني مجهول (نوع الهاتف وإصدار أندرويد وموضع العطل) عبر Firebase Crashlytics لإصلاح الأخطاء. لا يحتوي على المواقع التي تزورها.</li>
 <li><b>طلبات الاشتراك:</b> صورة إيصال التحويل ورقم المرجع والباقة، لمراجعتها وتفعيل الاشتراك، وتُحذف صورة الإيصال بعد المراجعة.</li>
 </ul>
 <h2>طلبات DNS</h2>
@@ -38,6 +39,7 @@ h1,h2{color:#0b7a5d}section{background:#fff;border-radius:14px;padding:8px 20px;
 <ul>
 <li><b>Account:</b> email address and account ID when you sign in with email or Google. We do not access your posts or friends.</li>
 <li><b>Phone fingerprint:</b> a SHA-256 hash of a device identifier, used to prevent repeating the free trial on the same phone. The original identifier is not stored.</li>
+<li><b>Crash reports:</b> when the app crashes, an anonymous technical report (phone model, Android version, where it failed) is sent through Firebase Crashlytics so we can fix bugs. It does not contain the sites you visit.</li>
 <li><b>Subscription requests:</b> transfer receipt image, reference number and plan, to review and activate the subscription. Receipt images are deleted after review.</li>
 </ul>
 <h2>DNS requests</h2>
