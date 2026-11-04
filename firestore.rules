@@ -82,7 +82,9 @@ service cloud.firestore {
 
     // بصمة الهاتف (SHA-256، لا يخرج المعرّف الأصلي): إنشاء فقط، فإن وُجد المستند يُرفض الإنشاء الثاني.
     match /devices/{h} {
-      allow read: if signedIn();
+      // قراءة مستند واحد فقط (يحتاجها التطبيق للتحقق من هاتفه)، أما سرد كل الأجهزة فللمشرف وحده
+      allow get: if signedIn();
+      allow list: if isAdmin();
       allow create: if signedIn() && h.matches('[a-f0-9]{64}')
         && request.resource.data.keys().hasOnly(['uid','createdAt'])
         && request.resource.data.uid == request.auth.uid

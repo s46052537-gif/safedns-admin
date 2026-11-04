@@ -3,88 +3,236 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>صافي — تصفّح بلا إعلانات مزعجة</title>
+<title>صافي — تصفّح بلا إعلانات ولا مواقع ضارة</title>
 <meta name="description" content="صافي يحجب الإعلانات وأدوات التتبع والمواقع الضارة على هاتفك الأندرويد، ويعمل داخل هاتفك دون إرسال تصفحك لأي خادم. جرّبه 7 أيام مجانًا.">
+<meta name="theme-color" content="#04110e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1020;--card:#141b34;--line:#26305a;--text:#eef2ff;--sub:#a9b4d6;--gold:#f5c542;--gold2:#e0a526;--on:#241a00}
+:root{
+  --bg:#04110e; --bg2:#062520; --card:#0a1f1b; --line:#15413a;
+  --text:#eaf7f2; --sub:#8fb0a5; --accent:#1de9b6; --on:#032019; --gold:#f7c948;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,"Segoe UI",Tahoma,sans-serif;line-height:1.8}
-.wrap{max-width:720px;margin:0 auto;padding:0 18px}
-header{padding:34px 0 8px;text-align:center}
-.logo{font-size:44px}
-h1{font-size:30px;margin:8px 0;line-height:1.4}
-h1 b{color:var(--gold)}
-.lead{color:var(--sub);font-size:17px;margin:6px 0 22px}
-.btn{display:inline-block;background:linear-gradient(180deg,var(--gold),var(--gold2));color:var(--on);font-weight:700;font-size:19px;padding:14px 34px;border-radius:30px;text-decoration:none}
-.small{color:var(--sub);font-size:13px;margin-top:10px}
-section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:6px 20px 16px;margin:20px 0}
-h2{font-size:20px;color:var(--gold);margin:16px 0 6px}
-ul{padding-inline-start:20px;margin:6px 0}
-li{margin:6px 0}
-ol{padding-inline-start:22px}
-.note{background:#1b2347;border-radius:12px;padding:10px 14px;color:var(--sub);font-size:14px;margin-top:10px}
-details{border-top:1px solid var(--line);padding:10px 0}
-details:first-of-type{border-top:0}
-summary{cursor:pointer;font-weight:700}
-details p{margin:6px 0 0;color:var(--sub)}
-footer{text-align:center;color:var(--sub);font-size:13px;padding:10px 0 40px}
-a{color:var(--gold)}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tajawal,system-ui,"Segoe UI",Tahoma,sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--text);text-decoration:none}
+.brand svg{width:34px;height:34px}
+nav .link{color:var(--sub);text-decoration:none;font-size:15px}
+nav .link:hover{color:var(--accent)}
+
+/* hero */
+.hero{position:relative;background:radial-gradient(ellipse 70% 60% at 50% 0%,#0b3b32 0%,transparent 70%),linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:1px solid var(--line);overflow:hidden}
+.hero .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;padding:30px 0 64px}
+.pill{display:inline-block;border:1px solid var(--line);background:#0a1f1b99;color:var(--accent);font-size:14px;padding:4px 14px;border-radius:99px}
+h1{font-size:46px;line-height:1.35;margin:14px 0 10px;font-weight:800}
+h1 b{color:var(--accent);font-weight:800}
+.lead{color:var(--sub);font-size:19px;margin:0 0 26px;max-width:520px}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:var(--on);font-weight:800;font-size:19px;padding:14px 32px;border-radius:16px;text-decoration:none;box-shadow:0 10px 30px #1de9b62e;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px #1de9b650}
+.btn svg{width:22px;height:22px}
+.ghost{display:inline-block;margin-inline-start:12px;color:var(--text);text-decoration:none;font-weight:500;padding:14px 18px;border-radius:16px;border:1px solid var(--line)}
+.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.meta{color:var(--sub);font-size:14px;margin-top:14px}
+.meta span{margin-inline-end:14px}
+
+/* phone mock */
+.phone{margin:0 auto;width:270px;height:540px;border-radius:38px;border:2px solid #1f5a50;background:linear-gradient(180deg,#03100d,#062520 60%,#04110e);padding:18px 16px;box-shadow:0 30px 80px #000a,0 0 0 8px #0a1f1b;position:relative}
+.phone .top{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:17px}
+.phone .top svg{width:22px;height:22px}
+.status{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}
+.status small{color:var(--sub);font-size:12px}
+.status b{display:block;font-size:19px;margin-top:2px}
+.power{margin:26px auto 14px;width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,#0f4b40,#0a2a24);border:2px solid var(--accent);display:grid;place-items:center;box-shadow:0 0 0 10px #1de9b61a,0 0 50px #1de9b655}
+.power svg{width:56px;height:56px}
+.on{text-align:center;color:var(--accent);font-weight:800}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center;font-size:11px;color:var(--sub)}
+.stats b{display:block;color:var(--text);font-size:16px}
+
+/* sections */
+section{padding:64px 0}
+.eyebrow{color:var(--accent);font-weight:700;font-size:15px}
+h2{font-size:32px;margin:4px 0 8px;font-weight:800;line-height:1.4}
+.sub{color:var(--sub);margin:0 0 30px;max-width:620px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.card .ic{width:46px;height:46px;border-radius:14px;background:#1de9b61f;display:grid;place-items:center;margin-bottom:12px}
+.card .ic svg{width:24px;height:24px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card h3{margin:0 0 4px;font-size:19px}
+.card p{margin:0;color:var(--sub);font-size:15px}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;position:relative}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on);font-weight:800;margin-bottom:10px}
+.step h3{margin:0 0 4px;font-size:17px}
+.step p{margin:0;color:var(--sub);font-size:14.5px}
+
+.band{background:linear-gradient(180deg,var(--bg2),var(--bg));border-block:1px solid var(--line)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+.note{border:1px solid #5a4a15;background:#2a220a;border-radius:16px;padding:14px 18px;color:#e9d9a0;font-size:15px}
+.note b{color:var(--gold)}
+.checks{list-style:none;padding:0;margin:0}
+.checks li{padding:8px 0 8px 0;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.checks li::before{content:"";flex:0 0 22px;height:22px;margin-top:5px;border-radius:50%;background:#1de9b626 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231de9b6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/14px no-repeat}
+
+details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:0 0 14px;color:var(--sub)}
+code{word-break:break-all;direction:ltr;display:block;color:var(--accent);background:#04110e;border:1px solid var(--line);padding:8px 10px;border-radius:10px;margin-top:8px;font-size:12.5px;text-align:left}
+
+.cta{text-align:center;background:radial-gradient(ellipse 60% 100% at 50% 100%,#0b3b32,transparent),var(--bg);border-top:1px solid var(--line)}
+.cta h2{font-size:34px}
+footer{text-align:center;color:var(--sub);font-size:14px;padding:26px 0 40px;border-top:1px solid var(--line)}
+
+@media(max-width:860px){
+  .hero .grid{grid-template-columns:1fr;text-align:center;padding-bottom:50px}
+  .lead{margin-inline:auto}
+  h1{font-size:34px}
+  .cards,.steps{grid-template-columns:1fr 1fr}
+  .two{grid-template-columns:1fr}
+  .ghost{display:none}
+  section{padding:46px 0}
+  h2{font-size:27px}
+}
+@media(max-width:520px){
+  .cards,.steps{grid-template-columns:1fr}
+  .phone{width:240px;height:480px}
+  .power{width:112px;height:112px}
+}
 </style>
 </head>
 <body>
+
+<div class="hero">
 <div class="wrap">
+<nav>
+  <a class="brand" href="#">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4 7 10v12c0 11 7 19 17 22 10-3 17-11 17-22V10z" fill="#0f4b40" stroke="#1de9b6" stroke-width="2.5" stroke-linejoin="round"/><path d="M15.5 24.5l6 6 11-13" fill="none" stroke="#1de9b6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    صافي
+  </a>
+  <a class="link" href="../privacy.html">الخصوصية</a>
+</nav>
 
-<header>
-<div class="logo">🛡️</div>
-<h1>تصفّح <b>أهدأ</b> وأسرع وأكثر أمانًا</h1>
-<p class="lead">صافي يحجب الإعلانات المزعجة وأدوات التتبع والمواقع الضارة على هاتفك الأندرويد.</p>
-<a class="btn" href="https://github.com/s46052537-gif/safedns-releases/releases/download/latest/SafeDNS.apk">تنزيل التطبيق (5.5 ميغابايت)</a>
-<div class="small">جرّبه 7 أيام مجانًا • أندرويد 8 فأحدث</div>
-</header>
+<div class="grid">
+  <div>
+    <span class="pill">أندرويد • تجربة مجانية 7 أيام</span>
+    <h1>تصفّح <b>أهدأ</b> وأسرع<br>وأكثر أمانًا</h1>
+    <p class="lead">صافي يحجب الإعلانات المزعجة وأدوات التتبع والمواقع الضارة على هاتفك كله، من المتصفح ومن التطبيقات، بضغطة واحدة.</p>
+    <a class="btn" id="dl" href="https://github.com/s46052537-gif/safedns-releases/releases/download/latest/SafeDNS.apk">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 20h14"/></svg>
+      تنزيل التطبيق
+    </a>
+    <a class="ghost" href="#how">كيف أثبّته؟</a>
+    <div class="meta"><span>الحجم: <b id="size">نحو 14 ميغابايت</b></span><span>أندرويد 8 فأحدث</span></div>
+  </div>
+
+  <div class="phone" aria-hidden="true">
+    <div class="top"><span>صافي</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#8fb0a5" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>
+    </div>
+    <div class="status"><small>الحالة</small><b>أنت محمي</b></div>
+    <div class="power"><svg viewBox="0 0 24 24" fill="none" stroke="#1de9b6" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v8M6.3 6.6a8 8 0 1 0 11.4 0"/></svg></div>
+    <div class="on">الحماية تعمل</div>
+    <div class="stats">
+      <div><b>1,284</b>محجوب</div>
+      <div><b>96%</b>الحماية</div>
+      <div><b>9.4 م</b>نطاق</div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
 
 <section>
-<h2>ماذا يفعل؟</h2>
-<ul>
-<li>يحجب الإعلانات وأدوات التتبع في المتصفح وفي كثير من التطبيقات.</li>
-<li>يحميك من مواقع التصيّد الاحتيالي والمواقع التي توزّع الفيروسات.</li>
-<li>يعمل داخل هاتفك: لا يمرّ تصفحك عبر أي خادم ولا نحتفظ بسجل مواقعك.</li>
-<li>تتحكم أنت: قائمة سماح وقائمة حظر خاصتان بك، واستثناء أي تطبيق.</li>
-</ul>
-<div class="note"><b>بصراحة:</b> يحجب الحماية على مستوى أسماء المواقع، وهذا يزيل معظم الإعلانات والمتتبعات، لكنه لا يستطيع حجب كل شيء. فبعض الإعلانات التي تأتي من الموقع نفسه (ومنها إعلانات يوتيوب داخل الفيديو) قد تبقى.</div>
+<div class="wrap">
+  <div class="eyebrow">ماذا يفعل؟</div>
+  <h2>حماية هادئة تعمل في الخلفية</h2>
+  <p class="sub">تشغّله مرة واحدة ثم تنسى أمره. يفحص أسماء المواقع فقط ويمنع ما هو مزعج أو ضار.</p>
+  <div class="cards">
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="3"/><path d="M8 21h8M3 4l18 14"/></svg></div><h3>حجب الإعلانات</h3><p>إعلانات المواقع والتطبيقات، فتتصفح بسرعة وبدون إزعاج.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM4 4l16 16"/></svg></div><h3>منع التتبع</h3><p>يمنع أدوات تجميع بيانات نشاطك بين المواقع والتطبيقات.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"/><path d="M12 8v5M12 16h.01"/></svg></div><h3>مواقع الاحتيال والفيروسات</h3><p>يحجب التصيّد الاحتيالي والمواقع التي توزّع برمجيات خبيثة.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div><h3>المحتوى غير اللائق</h3><p>خيار تشغّله بنفسك لحجب المواقع الإباحية ومواقع القمار، مع البحث الآمن.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h3>خصوصية كاملة</h3><p>يعمل داخل هاتفك. لا نحتفظ بسجل مواقعك ولا يمرّ تصفحك عبر خوادمنا.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/><circle cx="18" cy="12" r="2"/></svg></div><h3>أنت المتحكم</h3><p>قائمة سماح وقائمة حظر خاصتان بك، واستثناء أي تطبيق من الحماية.</p></div>
+  </div>
+</div>
+</section>
+
+<section class="band" id="how">
+<div class="wrap">
+  <div class="eyebrow">التثبيت</div>
+  <h2>جاهز في دقيقتين</h2>
+  <p class="sub">يُنزَّل من هنا مباشرة لأن المتاجر لا تقبل تطبيقات حجب الإعلانات.</p>
+  <div class="steps">
+    <div class="step"><h3>نزّل الملف</h3><p>اضغط «تنزيل التطبيق» من هاتفك.</p></div>
+    <div class="step"><h3>ثبّته</h3><p>افتح الملف واسمح للمتصفح بالتثبيت. وإن ظهرت رسالة Play Protect فاختر «تثبيت على أي حال».</p></div>
+    <div class="step"><h3>سجّل دخولك</h3><p>بحساب Google أو ببريدك لتبدأ تجربتك المجانية 7 أيام.</p></div>
+    <div class="step"><h3>شغّل الحماية</h3><p>اضغط زر التشغيل ووافق على إذن VPN المحلي. تظهر أيقونة المفتاح في الأعلى.</p></div>
+  </div>
+</div>
 </section>
 
 <section>
-<h2>كيف أثبّته؟ (دقيقتان)</h2>
-<ol>
-<li>اضغط «تنزيل التطبيق» من هاتفك.</li>
-<li>افتح الملف بعد التنزيل. إن ظهرت رسالة «السماح بالتثبيت من هذا المصدر» فاسمح للمتصفح.</li>
-<li>اضغط «تثبيت». وإن ظهرت رسالة من Play Protect فاختر «تثبيت على أي حال».</li>
-<li>افتح صافي، وسجّل دخولك بحساب Google لتبدأ تجربتك المجانية 7 أيام.</li>
-<li>اضغط الزر الأخضر ووافق على إذن VPN المحلي. تظهر لك أيقونة المفتاح في الأعلى.</li>
-</ol>
+<div class="wrap two">
+  <div>
+    <div class="eyebrow">بصراحة</div>
+    <h2>ما الذي يستطيعه وما لا يستطيعه</h2>
+    <ul class="checks">
+      <li>يزيل معظم الإعلانات وأدوات التتبع في المتصفح والتطبيقات.</li>
+      <li>يحميك من مواقع التصيّد والبرمجيات الخبيثة المعروفة.</li>
+      <li>لا يبطّئ التصفح، ويستهلك القليل من البطارية.</li>
+    </ul>
+  </div>
+  <div class="note"><b>تنبيه:</b> الحجب يتم على مستوى أسماء المواقع، فهو لا يستطيع حجب كل شيء. بعض الإعلانات التي تأتي من الموقع نفسه، ومنها إعلانات يوتيوب داخل الفيديو، قد تبقى. وأي موقع جديد غير موجود في القوائم قد يمرّ.</div>
+</div>
 </section>
 
-<section>
-<h2>أسئلة شائعة</h2>
-<details><summary>هل هو آمن؟</summary><p>التطبيق موقّع رقميًا، ولا يجمع سجل تصفحك. الاتصال الذي يفتحه (VPN) محلي على هاتفك لفحص أسماء المواقع فقط. اقرأ <a href="../privacy.html">سياسة الخصوصية</a>.</p></details>
-<details><summary>لماذا ليس في Google Play؟</summary><p>سياسات المتجر لا تسمح بتطبيقات حجب الإعلانات، لذلك نوزّعه مباشرة من هنا. (نعمل أيضًا على نسخة عائلية للمتجر تحمي الأطفال).</p></details>
-<details><summary>كم السعر؟</summary><p>أول 7 أيام مجانية، ثم باقات شهرية وسنوية تظهر أسعارها داخل التطبيق.</p></details>
-<details><summary>كيف أتحقق أن الملف سليم؟</summary><p>بصمة الملف الحالي (SHA-256): <code id="sha" style="word-break:break-all;direction:ltr;display:block;color:var(--gold)">جارٍ التحميل…</code> يمكنك مقارنتها ببصمة ما نزّلته باستخدام أي تطبيق لفحص الملفات.</p></details>
-<details><summary>كيف أدفع؟</summary><p>من داخل التطبيق بالتحويل المصرفي وإرسال صورة الإيصال، ويُفعَّل اشتراكك بعد المراجعة. ستُضاف طرق دفع أخرى قريبًا.</p></details>
-<details><summary>هل يبطّئ الإنترنت أو يستهلك البطارية؟</summary><p>لا يمرّ عبره سوى طلبات أسماء المواقع، فلا يبطّئ التصفح ويستهلك القليل من البطارية.</p></details>
-<details><summary>كيف أتواصل مع الدعم؟</summary><p>من زر «تواصل معنا» العائم داخل التطبيق.</p></details>
+<section class="band">
+<div class="wrap" style="max-width:760px">
+  <div class="eyebrow">أسئلة شائعة</div>
+  <h2>إجابات سريعة</h2>
+  <br>
+  <details><summary>هل هو آمن؟</summary><p>التطبيق موقّع رقميًا، ولا يجمع سجل تصفحك. الاتصال الذي يفتحه (VPN) محلي على هاتفك لفحص أسماء المواقع فقط. اقرأ <a href="../privacy.html">سياسة الخصوصية</a>.</p></details>
+  <details><summary>لماذا ليس في Google Play؟</summary><p>سياسات المتجر لا تسمح بتطبيقات حجب الإعلانات، لذلك نوزّعه مباشرة من هنا.</p></details>
+  <details><summary>كم السعر؟</summary><p>أول 7 أيام مجانية، ثم باقات شهرية وسنوية تظهر أسعارها داخل التطبيق.</p></details>
+  <details><summary>كيف أدفع؟</summary><p>من داخل التطبيق بالتحويل المصرفي وإرسال صورة الإيصال، ويُفعَّل اشتراكك بعد المراجعة. ستُضاف طرق دفع أخرى قريبًا.</p></details>
+  <details><summary>كيف أتحقق أن الملف سليم؟</summary><p>بصمة الملف الحالي (SHA-256): <code id="sha">جارٍ التحميل…</code> قارنها ببصمة ما نزّلته باستخدام أي تطبيق لفحص الملفات.</p></details>
+  <details><summary>كيف أتواصل مع الدعم؟</summary><p>من زر «تواصل معنا» داخل التطبيق.</p></details>
+</div>
 </section>
 
-<section style="text-align:center">
-<h2>جاهز؟</h2>
-<a class="btn" href="https://github.com/s46052537-gif/safedns-releases/releases/download/latest/SafeDNS.apk">تنزيل صافي</a>
+<section class="cta">
+<div class="wrap">
+  <h2>جرّب صافي اليوم</h2>
+  <p class="sub" style="margin-inline:auto">7 أيام مجانًا، بدون التزام.</p>
+  <a class="btn" href="https://github.com/s46052537-gif/safedns-releases/releases/download/latest/SafeDNS.apk">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 20h14"/></svg>
+    تنزيل صافي
+  </a>
+</div>
 </section>
 
 <footer>© صافي • <a href="../privacy.html">سياسة الخصوصية</a></footer>
-</div>
+
 <script>
 fetch("https://api.github.com/repos/s46052537-gif/safedns-releases/releases/tags/latest")
- .then(r=>r.json()).then(j=>{var m=/SHA-256:\s*([0-9a-f]{64})/i.exec(j.body||"");document.getElementById("sha").textContent=m?m[1]:"غير متاحة الآن"})
+ .then(function(r){return r.json()}).then(function(j){
+   var m=/SHA-256:\s*([0-9a-f]{64})/i.exec(j.body||"");
+   document.getElementById("sha").textContent=m?m[1]:"غير متاحة الآن";
+   var a=(j.assets||[]).filter(function(x){return /\.apk$/i.test(x.name)})[0];
+   if(a&&a.size)document.getElementById("size").textContent=(a.size/1048576).toFixed(1).replace(".0","")+" ميغابايت";
+ })
  .catch(function(){document.getElementById("sha").textContent="غير متاحة الآن"});
 </script>
 </body>
