@@ -80,6 +80,16 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    // أجهزة العائلة: كل مستند هاتف ابن يملكه صاحب الحساب وحده (يقرؤه ويكتبه ويحذفه)
+    match /families/{uid}/kids/{kid} {
+      allow read, delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && kid.matches('[a-f0-9]{16}')
+        && request.resource.data.keys().hasOnly(['name','model','on','ver','seen','sleepOn','sleepStart','sleepEnd','paused','total','blocked','top','topDay'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 40
+        && (!('top' in request.resource.data) || (request.resource.data.top is list && request.resource.data.top.size() <= 10));
+    }
+
     // بصمة الهاتف (SHA-256، لا يخرج المعرّف الأصلي): إنشاء فقط، فإن وُجد المستند يُرفض الإنشاء الثاني.
     match /devices/{h} {
       // قراءة مستند واحد فقط (يحتاجها التطبيق للتحقق من هاتفه)، أما سرد كل الأجهزة فللمشرف وحده
